@@ -2,7 +2,7 @@
 
 
 #Issue
-Your backend-service application is experiencing downtime because 
+#Your backend-service application is experiencing downtime because 
 #it is not configured to automatically restart when it crashes. 
 #This is causing prolonged downtime until the issue is manually addressed.
 
