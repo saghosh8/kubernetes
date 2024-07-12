@@ -1,3 +1,5 @@
+#!/usr/bin/env yaml
+
 #Issue
 #Your notification-service application is facing latency issues due to a backlog of processing messages. 
 #The service is designed to handle incoming notifications, but as traffic increases, 
