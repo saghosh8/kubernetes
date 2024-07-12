@@ -1,0 +1,40 @@
+#Issue:
+#Your application needs to persist data (e.g., logs, user uploads) across pod restarts, 
+#but there’s no volume configured for storage, which could lead to data loss.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web-app-container
+        image: your-web-app-image:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:  # Define volume mounts for the container
+        - name: data-volume  # Name of the volume mount
+          mountPath: /data  # Path inside the container where the volume will be mounted
+      volumes:  # Define volumes available to the pod
+      - name: data-volume  # Name of the volume
+        persistentVolumeClaim:  # Use PVC for persistent storage
+          claimName: data-pvc  # Name of the PersistentVolumeClaim
+
+
+#Explanation:
+#volumeMounts: Specifies where the volume will be mounted inside the container. Here, it is mounted at /data.
+#volumes: Defines the volumes that are available to the pod.
+#persistentVolumeClaim: Indicates that the volume is backed by a PersistentVolumeClaim (PVC), 
+#which allows you to dynamically provision storage resources. 
+#Replace data-pvc with the name of your PVC.
+#This configuration ensures that any data written to /data inside the container is stored persistently, 
+#allowing it to survive pod restarts or rescheduling. Be sure to create the corresponding PVC to manage the underlying storage resource.
