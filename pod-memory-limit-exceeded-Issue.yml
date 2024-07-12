@@ -1,0 +1,33 @@
+#Issue: Pod Memory Limit Exceeded
+#Description:
+#The application is experiencing frequent crashes due to exceeding the allocated memory limits. 
+#The current memory limit is set too low for the application's workload, 
+#causing the Kubernetes scheduler to terminate the pod when it uses more memory than allocated.
+
+#Proposed Solution:
+#Increase the memory limits in the Kubernetes deployment YAML file to ensure the application has sufficient resources to run smoothly.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+        image: my-app-image:latest
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"
+          limits:
+            memory: "512Mi"  # Increased limit to prevent crashes
+            cpu: "1"

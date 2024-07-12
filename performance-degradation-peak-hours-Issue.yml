@@ -1,0 +1,55 @@
+#Issue
+#Your api-service is experiencing performance degradation during peak traffic times. 
+#The service is not scaling properly to handle the increased load, leading to slow response times and timeouts.
+#
+#Solution
+#To resolve this issue, you will configure a Horizontal Pod Autoscaler (HPA) for the api-service to automatically 
+#scale the number of pods based on CPU utilization.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: api-service:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: api-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api-service
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+
+#Explanation
+#This YAML file contains both the Deployment and the HorizontalPodAutoscaler resources.
+#The Deployment manages the api-service, including resource requests and limits.
+#The HorizontalPodAutoscaler ensures that the number of replicas is adjusted automatically based on CPU utilization, 
+#allowing the service to handle varying loads efficiently.

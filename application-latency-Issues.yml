@@ -1,0 +1,70 @@
+#Issue
+#Your notification-service application is facing latency issues due to a backlog of processing messages. 
+#The service is designed to handle incoming notifications, but as traffic increases, 
+#the existing single-instance deployment is unable to process messages in real-time, leading to delays in notifications being sent out.
+
+#Solution
+#To address the latency issue, you can implement Horizontal Pod Autoscaler (HPA) 
+#along with message queue integration to dynamically scale the notification-service 
+#based on the number of pending messages in the queue.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+spec:
+  replicas: 1  # Start with one pod; HPA will scale this up as needed
+  selector:
+    matchLabels:
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    spec:
+      containers:
+      - name: notification
+        image: notification-service:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: QUEUE_URL
+          value: "https://your-message-queue-url"  # Example environment variable for queue
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: notification-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: notification-service
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: External
+    external:
+      metric:
+        name: queue_length  # This metric should be defined in your monitoring solution
+      target:
+        type: AverageValue
+        averageValue: "10"  # Scale when the average queue length exceeds 10
+
+
+#Explanation
+#Deployment: Manages the notification-service, with initial resource requests and limits defined. 
+#The environment variable QUEUE_URL is used to connect to the message queue.
+#HorizontalPodAutoscaler (HPA):
+#scaleTargetRef: Specifies the target deployment for scaling.
+#minReplicas: Starts with at least one pod.
+#maxReplicas: Can scale up to ten pods based on the defined metrics.
+#metrics: Monitors an external metric (e.g., queue length) to determine when to scale up or down.
