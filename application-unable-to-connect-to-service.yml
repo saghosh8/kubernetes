@@ -1,0 +1,36 @@
+#Issue:
+#Your application is unable to connect to a Redis service 
+#because it’s not properly defined in your Kubernetes cluster.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service  # Name of the service to expose Redis
+spec:
+  selector:
+    app: redis  # Selects the Redis pods based on label
+  ports:
+    - protocol: TCP
+      port: 6379  # Port that the service will expose
+      targetPort: 6379  # Port on the Redis container
+  type: ClusterIP  # Exposes the service internally within the cluster
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis  # Name of the Redis deployment
+spec:
+  replicas: 1  # Number of Redis instances to run
+  selector:
+    matchLabels:
+      app: redis  # Matches pods with the label 'app: redis'
+  template:
+    metadata:
+      labels:
+        app: redis  # Label to identify Redis pods
+    spec:
+      containers:
+      - name: redis-container  # Name of the Redis container
+        image: redis:latest  # Redis image from Docker Hub
+        ports:
+        - containerPort: 6379  # Port exposed by the Redis container

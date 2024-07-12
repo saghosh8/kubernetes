@@ -1,0 +1,36 @@
+#Issue:
+#Your application deployment does not have health checks configured, 
+#which means Kubernetes cannot determine if the application is running properly. 
+#This can lead to issues with service reliability.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web-app-container
+        image: your-web-app-image:latest
+        ports:
+        - containerPort: 80
+        livenessProbe:  # Checks if the app is still running
+          httpGet:
+            path: /health  # Endpoint to check health
+            port: 80
+          initialDelaySeconds: 30  # Wait 30 seconds before the first check
+          periodSeconds: 10  # Check every 10 seconds
+        readinessProbe:  # Checks if the app is ready to receive traffic
+          httpGet:
+            path: /ready  # Endpoint to check readiness
+            port: 80
+          initialDelaySeconds: 20  # Wait 20 seconds before the first check
+          periodSeconds: 5  # Check every 5 seconds
