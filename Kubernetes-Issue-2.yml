@@ -1,0 +1,60 @@
+#Kubernetes-Issue-2
+
+
+#Issue
+Your backend-service application is experiencing downtime because 
+#it is not configured to automatically restart when it crashes. 
+#This is causing prolonged downtime until the issue is manually addressed.
+
+#Solution
+#To resolve this issue, you will add a restartPolicy and 
+#livenessProbe to the backend-service deployment YAML file to ensure that the service 
+#is automatically restarted if it crashes and regularly checked for its health.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: backend-service:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+          limits:
+            memory: "512Mi"
+            cpu: "1"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        restartPolicy: Always
+
+
+
+
+#Explanation
+
+#restartPolicy: The restartPolicy: Always ensures that the container is always restarted if it crashes. 
+#This is the default policy for Deployments and ensures high availability.
+
+#livenessProbe: The livenessProbe checks the health of the container by sending HTTP GET requests to the specified path and port. 
+#If the probe fails, Kubernetes will restart the container.
+
+#By adding a restartPolicy and livenessProbe, you can ensure that your backend-service automatically recovers from crashes and 
+#is regularly checked for its health, improving the overall reliability of your application.

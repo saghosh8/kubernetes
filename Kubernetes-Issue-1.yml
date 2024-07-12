@@ -6,6 +6,10 @@
 #The issue is due to the lack of resource limits, causing the service 
 #to consume excessive CPU and memory resources, leading to node instability.
 
+#Solution
+#To resolve this issue, you will define resource requests and 
+#limits for the frontend-service in its Kubernetes deployment YAML file.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,7 +39,12 @@ spec:
 
 
 #Explanation
-#requests: These are the minimum resources required by the container. The scheduler uses these values to determine on which node to place the pod.
-#limits: These are the maximum resources that the container can use. If the container exceeds these values, it will be throttled or terminated.
-#By adding these resource requests and limits, you can ensure that your frontend-service does not consume excessive resources, 
+
+#requests: These are the minimum resources required by the container. 
+#The scheduler uses these values to determine on which node to place the pod.
+
+#limits: These are the maximum resources that the container can use. 
+#If the container exceeds these values, it will be throttled or terminated.
+#By adding these resource requests and limits, 
+#you can ensure that your frontend-service does not consume excessive resources, 
 #which should help stabilize your Kubernetes nodes and improve the reliability of your service.
