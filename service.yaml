@@ -1,0 +1,17 @@
+#Issue:
+#Your application needs to expose its deployment as a service to allow other pods and external clients to access it.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-service  # Name of the Service
+spec:
+  selector:
+    app: web  # Selects pods with the label 'app: web'
+  ports:
+    - protocol: TCP
+      port: 80  # Port exposed by the Service
+      targetPort: 80  # Port on the pod that the Service forwards traffic to
+  type: ClusterIP  # Default service type; accessible only within the cluster
+
+

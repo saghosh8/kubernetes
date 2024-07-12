@@ -1,0 +1,31 @@
+#Issue:
+#Your application needs to communicate with external services (e.g., databases or APIs) outside the Kubernetes cluster, 
+#but there's currently no Egress resource configured, which may lead to network policy restrictions.
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress  # Name of the NetworkPolicy
+spec:
+  podSelector:
+    matchLabels:
+      app: web  # Target pods with the label 'app: web'
+  policyTypes:
+  - Egress  # Specifies this policy controls egress traffic
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 192.168.1.0/24  # Replace with the CIDR of the external service
+    ports:
+    - protocol: TCP
+      port: 443  # Port for HTTPS traffic
+
+#Explanation:
+#NetworkPolicy: This resource allows you to define rules that control the traffic to and from pods.
+#podSelector: Targets pods with a specific label (app: web) to apply the policy.
+#policyTypes: Indicates that this policy is for controlling egress traffic.
+#egress: Specifies allowed outbound traffic.
+#to: Defines the destinations that can be accessed. 
+#Here, it's configured to allow traffic to a specific CIDR block (which you can adjust to fit your external services).
+#ports: Specifies the protocol and port for the egress traffic, allowing outbound connections over HTTPS (port 443 in this case).
+#With this setup, the selected pods will be able to communicate with the specified external IP range over the defined port.

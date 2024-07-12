@@ -1,0 +1,30 @@
+#Issue:
+#Your application deployment has a hardcoded environment variable for a database connection string, 
+#making it difficult to manage configurations across different environments (e.g., development, staging, production).
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web-app-container
+        image: your-web-app-image:latest
+        ports:
+        - containerPort: 80
+        env:  # Define environment variables
+        - name: DATABASE_URL  # Environment variable name
+          valueFrom:
+            secretKeyRef:  # Use a Kubernetes Secret for sensitive information
+              name: db-connection-secret  # Name of the Secret
+              key: connectionString  # Key in the Secret that contains the connection string
+

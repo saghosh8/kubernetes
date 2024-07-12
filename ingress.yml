@@ -1,0 +1,32 @@
+#Issue:
+#Your application is not accessible from outside the cluster because there is no Ingress resource configured, 
+#making it difficult for users to reach the web application.
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-app-ingress  # Name of the Ingress resource
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /  # NGINX specific annotation for URL rewriting
+spec:
+  rules:
+  - host: yourdomain.com  # Replace with your domain
+    http:
+      paths:
+      - path: /  # Path to match
+        pathType: Prefix
+        backend:
+          service:
+            name: web-app-service  # Name of the service that the Ingress routes to
+            port:
+              number: 80  # Port number of the service
+
+
+#Explanation:
+#Ingress: The Ingress resource manages external access to the services within your cluster.
+#rules: Specifies how traffic is routed based on the host and path.
+#host: The domain name that users will use to access the application.
+#backend: Defines which service the Ingress should route requests to, along with the port.
+#annotations: Allows you to customize the behavior of the Ingress controller (like NGINX) for URL rewriting or other features.
+#With this configuration, users can access your application using the specified domain, 
+#and traffic will be routed to the correct service inside the cluster.
