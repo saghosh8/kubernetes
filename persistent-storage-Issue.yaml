@@ -1,0 +1,74 @@
+#Issue: Application Fails to Persist Data due to Storage Problems
+#Problem Description:
+#An application deployed on a Kubernetes cluster is experiencing issues with data persistence. /
+#Whenever the application pod restarts or reschedules, all data stored within the pod's filesystem is lost. 
+#This happens because the pod's ephemeral storage does not retain data across restarts, leading to potential data loss and inconsistent application states.
+
+#Solution: Using Kubernetes Persistent Storage
+#To resolve this issue, we will use Kubernetes Persistent Volumes (PV) and Persistent Volume Claims (PVC). 
+#This approach decouples storage from the lifecycle of pods, ensuring data persists across pod restarts and rescheduling.
+
+
+#Step 1: Create a Persistent Volume (PV)
+#Create a YAML file named persistent-volume.yaml for the Persistent Volume definition. 
+#This example uses a simple local path for demonstration; in production, 
+#consider using cloud storage solutions like GCEPersistentDisk, AWSElasticBlockStore, AzureDisk, etc.
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+#Step 2: Create a Persistent Volume Claim (PVC)
+#Create a YAML file named persistent-volume-claim.yaml for the Persistent Volume Claim definition. 
+#This PVC will request storage from the PV created in the previous step.
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: example-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+#Step 3: Modify the Application Deployment to Use the PVC
+#Edit your application's deployment YAML file to use the PVC. 
+#Here’s an example snippet of a deployment file deployment.yaml 
+#that mounts the PVC to a specific directory in the pod.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: example-app
+  template:
+    metadata:
+      labels:
+        app: example-app
+    spec:
+      containers:
+      - name: example-container
+        image: example-image:latest
+        volumeMounts:
+        - mountPath: "/data"
+          name: storage
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: example-pvc
+#Step 4: Apply the YAML Files to Your Kubernetes Cluster
+#Use kubectl to apply the PV, PVC, and deployment files to your Kubernetes cluster.
