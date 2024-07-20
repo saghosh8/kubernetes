@@ -1,5 +1,3 @@
-Here is a `README.md` file based on the provided image contents:
-
 # Kubernetes Issues and Solutions
 
 This repository contains various YAML files that address common Kubernetes issues and provide configurations for solutions. Each YAML file corresponds to a specific issue or configuration scenario.
