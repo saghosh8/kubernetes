@@ -35,10 +35,3 @@ Ensure you have the necessary permissions and context set for your Kubernetes cl
 ## Contributing
 
 Feel free to open issues or submit pull requests if you have any improvements or suggestions.
-
-## License
-
-This repository is licensed under the MIT License.
-```
-
-Feel free to modify the content according to your specific needs or additional details.
