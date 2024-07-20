@@ -29,7 +29,7 @@ Each YAML file can be applied to your Kubernetes cluster using the `kubectl appl
 
 ```sh
 kubectl apply -f application-latency-Issues.yml
-
+```
 
 Ensure you have the necessary permissions and context set for your Kubernetes cluster before applying these configurations.
 
