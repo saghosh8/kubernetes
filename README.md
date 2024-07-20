@@ -1,6 +1,5 @@
 Here is a `README.md` file based on the provided image contents:
 
-```markdown
 # Kubernetes Issues and Solutions
 
 This repository contains various YAML files that address common Kubernetes issues and provide configurations for solutions. Each YAML file corresponds to a specific issue or configuration scenario.
@@ -29,7 +28,7 @@ Each YAML file can be applied to your Kubernetes cluster using the `kubectl appl
 
 ```sh
 kubectl apply -f application-latency-Issues.yml
-```
+
 
 Ensure you have the necessary permissions and context set for your Kubernetes cluster before applying these configurations.
 
